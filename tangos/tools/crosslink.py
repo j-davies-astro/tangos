@@ -34,6 +34,9 @@ class GenericLinker(GenericTangosTool):
                             help='Process in reverse order (low-z first)')
         parser.add_argument('--dmonly', action='store_true',
                             help='only match halos based on DM particles. Much more memory efficient, but currently only works for Rockstar halos')
+        parser.add_argument('--most_bound_fraction', action='store', type=float, default=None,
+                            help='Match halos based on a specified fraction of the particles that are the most tightly-bound.'
+                                    'Currently only works when using the pynbody input handler')
 
     def run_calculation_loop(self):
         parallel_tasks.database.synchronize_creator_object()
@@ -50,7 +53,7 @@ class GenericLinker(GenericTangosTool):
         for s_x, s in pair_list:
             logger.info("Linking %r and %r",s_x,s)
             if self.args.force or self.need_crosslink_ts(s_x, s, object_type):
-                self.crosslink_ts(s_x, s, 0, self.args.hmax, self.args.dmonly, object_typecode=object_type)
+                self.crosslink_ts(s_x, s, 0, self.args.hmax, self.args.dmonly, self.args.most_bound_fraction, object_typecode=object_type)
 
     def _generate_timestep_pairs(self):
         raise NotImplementedError("No implementation found for generating the timestep pairs")
@@ -108,7 +111,7 @@ class GenericLinker(GenericTangosTool):
         halos_map = {h.finder_id: h for h in halos}
         return halos_map
 
-    def crosslink_ts(self, ts1, ts2, halo_min=0, halo_max=None, dmonly=False, threshold=config.default_linking_threshold, object_typecode=0):
+    def crosslink_ts(self, ts1, ts2, halo_min=0, halo_max=None, dmonly=False, most_bound_fraction=None, threshold=config.default_linking_threshold, object_typecode=0):
         """Link the halos of two timesteps together
 
         :type ts1 tangos.core.TimeStep
@@ -135,10 +138,10 @@ class GenericLinker(GenericTangosTool):
         try:
             cat = output_handler_1.match_objects(ts1.extension, ts2.extension, halo_min, halo_max, dmonly, threshold,
                                                  core.halo.Halo.object_typetag_from_code(object_typecode),
-                                                 output_handler_for_ts2=output_handler_2)
+                                                 output_handler_for_ts2=output_handler_2,most_bound_fraction=most_bound_fraction)
             back_cat = output_handler_2.match_objects(ts2.extension, ts1.extension, halo_min, halo_max, dmonly, threshold,
                                                       core.halo.Halo.object_typetag_from_code(object_typecode),
-                                                      output_handler_for_ts2= output_handler_1)
+                                                      output_handler_for_ts2= output_handler_1,most_bound_fraction=most_bound_fraction)
         except Exception as e:
             if isinstance(e, KeyboardInterrupt):
                 raise
