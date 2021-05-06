@@ -34,9 +34,9 @@ class GenericLinker(GenericTangosTool):
                             help='Process in reverse order (low-z first)')
         parser.add_argument('--dmonly', action='store_true',
                             help='only match halos based on DM particles. Much more memory efficient, but currently only works for Rockstar halos')
-        parser.add_argument('--most_bound_fraction', action='store', type=float, default=None,
+        parser.add_argument('--most-bound', action='store', type=float, dest='most_bound_fraction', default=None,
                             help='Match halos based on a specified fraction of the particles that are the most tightly-bound.'
-                                    'Currently only works when using the pynbody input handler')
+                                    'Currently only works when using the pynbody input handler.')
 
     def run_calculation_loop(self):
         parallel_tasks.database.synchronize_creator_object()
