@@ -43,7 +43,7 @@ class YtInputHandler(finding.PatternBasedFileDiscovery, HandlerBase):
     def load_tracked_region(self, ts_extension, track_data, mode=None):
         raise NotImplementedError("Tracked regions not implemented for yt")
 
-    def match_objects(self, ts1, ts2, halo_min, halo_max, dm_only=False, threshold=0.005, object_typetag='halo'):
+    def match_objects(self, ts1, ts2, halo_min, halo_max, dm_only=False, threshold=0.005, object_typetag='halo',most_bound_fraction=None):
         raise NotImplementedError("Matching halos still needs to be implemented for yt")
 
     def enumerate_objects(self, ts_extension, object_typetag="halo", min_halo_particles=config.min_halo_particles):

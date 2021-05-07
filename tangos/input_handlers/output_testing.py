@@ -45,7 +45,7 @@ class TestInputHandler(HandlerBase):
             yield i+1, i+1, 2000-i, 0, 0
 
     def match_objects(self, ts1, ts2, halo_min, halo_max, dm_only=False, threshold=0.005,
-                      object_typetag='halo', output_handler_for_ts2=None):
+                      object_typetag='halo', output_handler_for_ts2=None,most_bound_fraction=None):
         """Test implementation of match halos always links halo i->i, and a 0.05 mass transfer from i->i+1"""
         assert object_typetag=='halo' # currently only handle halos
         f1 = self.load_timestep(ts1)

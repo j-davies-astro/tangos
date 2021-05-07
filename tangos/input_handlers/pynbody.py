@@ -186,7 +186,7 @@ class PynbodyInputHandler(finding.PatternBasedFileDiscovery, HandlerBase):
 
     def match_objects(self, ts1, ts2, halo_min, halo_max,
                       dm_only=False, threshold=0.005, object_typetag='halo',
-                      output_handler_for_ts2=None):
+                      output_handler_for_ts2=None,most_bound_fraction=None):
         if dm_only:
             only_family='dm'
         else:
@@ -207,7 +207,8 @@ class PynbodyInputHandler(finding.PatternBasedFileDiscovery, HandlerBase):
             halo_max = max(len(h2), len(h1))
 
         return f1.bridge(f2).fuzzy_match_catalog(halo_min, halo_max, threshold=threshold,
-                                                 only_family=only_family, groups_1=h1, groups_2=h2)
+                                                 only_family=only_family, groups_1=h1, groups_2=h2,
+                                                 most_bound_fraction=most_bound_fraction)
 
     def enumerate_objects(self, ts_extension, object_typetag="halo", min_halo_particles=config.min_halo_particles):
         if self._can_enumerate_objects_from_statfile(ts_extension, object_typetag):
@@ -303,7 +304,7 @@ class RamsesHOPInputHandler(PynbodyInputHandler):
 
     def match_objects(self, ts1, ts2, halo_min, halo_max,
                       dm_only=False, threshold=0.005, object_typetag='halo',
-                      output_handler_for_ts2=None):
+                      output_handler_for_ts2=None,most_bound_fraction=None):
 
         f1 = self.load_timestep(ts1).dm
         h1 = self._construct_halo_cat(ts1, object_typetag)
@@ -318,7 +319,7 @@ class RamsesHOPInputHandler(PynbodyInputHandler):
         bridge = pynbody.bridge.OrderBridge(f1,f2, monotonic=False)
 
         return bridge.fuzzy_match_catalog(halo_min, halo_max, threshold=threshold,
-                                          only_family=pynbody.family.dm, groups_1=h1, groups_2=h2)
+                                          only_family=pynbody.family.dm, groups_1=h1, groups_2=h2, most_bound_fraction=most_bound_fraction)
 
 
 
